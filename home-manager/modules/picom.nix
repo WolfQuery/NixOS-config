@@ -40,6 +40,12 @@
 		detectRoundedCorners = true;
 		useDamage = true;
 
+# =========== RESTART SCRIPT =========== #
+		package = pkgs.writeShellScriptBin "restart-picom" ''
+	    	#!/usr/bin/env bash
+	    	pkill picom || true
+	    	picom --experimental-backends --config ${config.xdg.configHome}/picom/picom.conf &
+		'';
 	};
 }
 
