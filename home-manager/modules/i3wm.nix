@@ -25,7 +25,11 @@
 			ws8 = "8";
 			ws9 = "9";
 			ws10 = "10";
+
+			# Default terminal
       			terminal = "kitty";
+
+			# Commands ran upon startup or i3 reload
       			startup = [
 				{ command = "dex-autostart --autostart --environment i3"; }
 				{ command = "xss-lock --transfer-sleep-lock -- i3lock-fancy-rapid 5 3 --nofork"; }
@@ -34,7 +38,8 @@
 				{ command = "xrdb -merge ~/.Xresources"; }
 				{ command = "feh --bg-scale /etc/wallpapers/diinki/2CB.png"; }
 				{ command = "flameshot"; }
-				# NOTE: Picom and Polybar autostart with home-manager reload as they have their own configs.
+				{ command = "exec_always --no-startup-id ${config.programs.polybar.startScript}"; }
+				{ command = "exec_always --no-startup-id ${config.programs.picom.startScript}"; }
 				];
 
 			keybindings = {
