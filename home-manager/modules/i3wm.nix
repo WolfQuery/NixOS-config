@@ -123,7 +123,7 @@
 
 				# Switch workspace view
 				"${config.xsession.windowManager.i3.config.modifier}+plus" = "workspace number ${config.xsession.windowManager.i3.config.ws1}";
-				"${config.xsession.windowManager.i3.config.modifier}+ecaron = "workspace number ${config.xsession.windowManager.i3.config.ws2}";
+				"${config.xsession.windowManager.i3.config.modifier}+ecaron" = "workspace number ${config.xsession.windowManager.i3.config.ws2}";
 				"${config.xsession.windowManager.i3.config.modifier}+scaron" = "workspace number ${config.xsession.windowManager.i3.config.ws3}";
 				"${config.xsession.windowManager.i3.config.modifier}+ccaron" = "workspace number ${config.xsession.windowManager.i3.config.ws4}";
 				"${config.xsession.windowManager.i3.config.modifier}+rcaron" = "workspace number ${config.xsession.windowManager.i3.config.ws5}";
@@ -133,10 +133,84 @@
 				"${config.xsession.windowManager.i3.config.modifier}+iacute" = "workspace number ${config.xsession.windowManager.i3.config.ws9}";
 				"${config.xsession.windowManager.i3.config.modifier}+eacute" = "workspace number ${config.xsession.windowManager.i3.config.ws10}";
 
+				# Move focused window to workspace
+				# Switch workspace view
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+plus" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws1}";
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+ecaron" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws2}";
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+scaron" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws3}";
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+ccaron" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws4}";
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+rcaron" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws5}";
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+zcaron" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws6}";
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+yacute" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws7}";
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+aacute" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws8}";
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+iacute" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws9}";
+				"${config.xsession.windowManager.i3.config.modifier}+Shift+eacute" = "move container to workspace number ${config.xsession.windowManager.i3.config.ws10}";
 
+				# Resize window (doable with rmouse + super as well)
+				"${config.xsession.windowManager.i3.config.modifier}+r" = "mode resize";
+			};
 
-      };
-    };
-  };
+			modes = {
+				# Window resize mode
+				resize = {
+					"h" = "resize shrink width 10 px or 10 ppt";
+        				"j" = "resize grow height 10 px or 10 ppt";
+        				"k" = "resize shrink height 10 px or 10 ppt";
+        				"l" = "resize grow width 10 px or 10 ppt";
+
+        				# Exit resize mode
+        				"Return" = "mode default";
+        				"Escape" = "mode default";
+					"${config.xsession.windowManager.i3.config.modifier}+r" = "mode default";
+				};
+			};
+			colors = {
+				focused = {
+					border = "#FFFFFF";
+					background = "#FFFFFF";
+					text = "#FFFFFF";
+					indicator = "#FFFFFF";
+					childBorder = "#B12CBF";
+				};
+				focused_inactive = {
+					border = "#8C8C8C";
+					background = "#4C4C4C";
+					text = "#FFFFFF";
+					indicator = "#4C4C4C";
+					childBorder = "#FFFFFF";
+				};
+				unfocused = {
+					border = "4C4C4C";
+					background = "#222222";
+					text = "#888888";
+					indicator = "#292D2E";
+					childBorder = "#500096";
+				};
+				urgent = {
+					border = "#EC69A0";
+					background = "#DB3279";
+					text = "#FFFFFF";
+					indicator = "#DB3279";
+					childBorder = "#DB3279";
+				};
+				placeholder = {
+					border = "#000000";
+					background = "#0C0C0C";
+					text = "#FFFFFF";
+					indicator = "#000000";
+					childBorder = "#FFFFFF";
+				};
+				background = {
+					border = "#FFFFFF";
+				};
+			};
+			# Border sizes
+			window = {
+				default_border = "pixel 3";
+				default_floating_border = "pixel 3";
+				hide_edge_borders = "smart";
+			};
+		};
+	};
 }
 
