@@ -38,8 +38,8 @@
 				{ command = "xrdb -merge ~/.Xresources"; }
 				{ command = "feh --bg-scale /etc/wallpapers/diinki/2CB.png"; }
 				{ command = "flameshot"; }
-				{ command = "exec_always --no-startup-id ${config.programs.polybar.startScript}"; }
-				{ command = "exec_always --no-startup-id ${config.programs.picom.startScript}"; }
+				{ command = "exec_always --no-startup-id ${config.programs.polybar.script}"; }
+				{ command = "exec_always --no-startup-id ${config.services.picom.package}/bin/restart-picom"; }
 				];
 
 			keybindings = {
