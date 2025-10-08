@@ -31,7 +31,7 @@
 				{ command = "xss-lock --transfer-sleep-lock -- i3lock-fancy-rapid 5 3 --nofork"; }
         			{ command = "nm-applet"; }
         			{ command = "blueman-applet"; }
-				{ command = " xrdb -merge ~/.Xresources"; }
+				{ command = "xrdb -merge ~/.Xresources"; }
 				{ command = "feh --bg-scale /etc/wallpapers/diinki/2CB.png"; }
 				{ command = "flameshot"; }
 				# NOTE: Picom and Polybar autostart with home-manager reload as they have their own configs.
@@ -172,7 +172,7 @@
 					indicator = "#FFFFFF";
 					childBorder = "#B12CBF";
 				};
-				focused_inactive = {
+				focusedInactive = {
 					border = "#8C8C8C";
 					background = "#4C4C4C";
 					text = "#FFFFFF";
@@ -200,15 +200,12 @@
 					indicator = "#000000";
 					childBorder = "#FFFFFF";
 				};
-				background = {
-					border = "#FFFFFF";
-				};
 			};
 			# Border sizes
 			window = {
-				default_border = "pixel 3";
-				default_floating_border = "pixel 3";
-				hide_edge_borders = "smart";
+				border = 3;
+				floatingBorder = 3;
+				hideEdgeBorders = "smart";
 			};
 		};
 	};
