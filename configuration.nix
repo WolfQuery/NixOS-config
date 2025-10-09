@@ -15,6 +15,8 @@
 		./system/ly.nix; # ly Display Manager
 		./system/xserver.nix; # X11 Display Server
 		./system/pipewire.nix; # Pipewire audio
+		./system/localisation.nix # Locales + keyboard
+		./system/users.nix # users
 
 		# Home Manager #
 		./home-manager/mun.nix;
