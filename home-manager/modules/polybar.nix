@@ -5,11 +5,21 @@
 # Mun's Polybar config via home-manager
 
 { config, pkgs, ... }:
-
+let
+  colors = {
+    background      = "#1c182d";
+    background-alt  = "#2b1b3d";
+    foreground      = "#d0b6fd";
+    primary         = "#cfb5fd";
+    secondary       = "#8a78b0";
+    alert           = "#7b91fc";
+    disabled        = "#707880";
+  };
+in
 {
 	programs.polybar = {
 		enable = true;
-		defaultBar = "main" # The bar to launch
+		defaultBar = "main"; # The bar to launch
 
 		config = ''
 			[colors]
@@ -26,8 +36,8 @@
 			height = 30pt
 			radius = 15
 
-			background = ${colors.background}
-			foreground = ${colors.foreground}
+			background = "${colors.background}"
+			foreground = "${colors.foreground}"
 
 			line-size = 4pt
 

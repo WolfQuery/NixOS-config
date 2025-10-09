@@ -39,3 +39,4 @@
     			colorscheme catppuccin
   		'';
 	};
+}

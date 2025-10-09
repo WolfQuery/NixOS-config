@@ -8,28 +8,28 @@
 {
 # =========== IMPORTS =========== #
 	imports = [
-		./hardware-configuration.nix; # Hardware config
+		./hardware-configuration.nix # Hardware config
 		<home-manager/nixos>
 
 		# System #
-		./system/ly.nix; # ly Display Manager
-		./system/xserver.nix; # X11 Display Server
-		./system/pipewire.nix; # Pipewire audio
+		./system/ly.nix # ly Display Manager
+		./system/xserver.nix # X11 Display Server
+		./system/pipewire.nix # Pipewire audio
 		./system/localisation.nix # Locales + keyboard
 		./system/users.nix # users
 
 		# Home Manager #
-		./home-manager/mun.nix;
+		./home-manager/mun.nix
 
 		# Packages #
-		./packages/apps.nix;
-		./packages/audio-bluetooth.nix;
-		./packages/de-wm-managment.nix;
-		./packages/fonts.nix;
-		./packages/programming.nix;
-		./packages/sys_utils.nix;
-
-
+		./packages/apps.nix
+		./packages/audio-bluetooth.nix
+		./packages/de-wm-managment.nix
+		./packages/fonts.nix
+		./packages/programming.nix
+		./packages/sys_utils.nix
+		];
+		
 
 # =========== BOOTLOADER =========== #
 	boot.loader.systemd-boot.enable = true;
@@ -41,7 +41,7 @@
 
 
 # =========== NETWORKING =========== #
-	networking.hostname = "kronos"; # Network Hostname of the Machine
+	networking.hostName = "kronos"; # Network Hostname of the Machine
 	networking.networkmanager = {
 		enable = true;
 	};

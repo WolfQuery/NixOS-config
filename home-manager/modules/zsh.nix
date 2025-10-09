@@ -14,7 +14,7 @@
 
 		ohMyZsh = {
 			enable = true;
-			theme = "catppuccin"
+			theme = "catppuccin";
 			plugins = [ "git" "history-substring-search" "z" ];
 			};
 
@@ -25,12 +25,8 @@
 	};
 
   	# Use local theme path
-  	home.file.".oh-my-zsh/custom/themes/catppuccin.zsh-theme".source =
-    	./zsh/catppuccin-theme/catppuccin.zsh-theme;
-}
+  	home.file.".oh-my-zsh/custom/themes/catppuccin.zsh-theme".source = ./zsh/catppuccin-theme/catppuccin.zsh-theme;
 
-		};
 
-	home.shell = pkgs.zsh;
 }
 

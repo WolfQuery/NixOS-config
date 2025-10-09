@@ -23,3 +23,4 @@
       			colormix_col3 = "Ox8A78B0"; # colormix animation 3rd color (HEX)
 		};
 	};
+}
