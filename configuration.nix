@@ -198,7 +198,20 @@
         '';
       };
     };
+    xsession = {
+      windowManager = {
+        i3 = {
+          enable = true;
 
+          config = {
+            extraConfig = ''
+
+            '';
+          };
+        };
+      };
+    };
+  };
   # --- Other Services ---
   services.openssh.enable = true;
   system.copySystemConfiguration = true;
