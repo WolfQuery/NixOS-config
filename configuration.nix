@@ -468,9 +468,10 @@ hide_edge_borders smart
         };
       };
     };
-  programs = {
+  services = {
     polybar = {
-        extraConfig = ''
+      enable = true;
+      extraConfig = ''
           ;==========================================================
 ;
 ;
@@ -707,6 +708,7 @@ poll-interval = 5
       };
     };
   };
+};
   # --- Other Services ---
   services.openssh.enable = true;
   system.copySystemConfiguration = true;
