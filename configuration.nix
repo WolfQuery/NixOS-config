@@ -254,7 +254,7 @@ exec_always --no-startup-id feh --bg-scale ~/Pictures/wallpapers/may2025/2CB.png
 #exec --no-startup-id xautolock -time 3 -locker "i3lock-fancy"
 
 # start polybar
-exec_always --no-startup-id sh -c "killall -q polybar; sleep 1; polybar example --config=$HOME/.config/polybar/config.ini &"
+exec_always --no-startup-id sh -c "killall -q polybar; sleep 1; polybar example --config=~/.config/polybar/config.ini &"
 
 # automatically start flameshot
 exec --no-startup-id flameshot
@@ -470,7 +470,18 @@ hide_edge_borders smart
   services = {
     polybar = {
       enable = true;
-      extraConfig = ''
+      extraConfig = let
+  colors = {
+    background = "#1c182d";
+    background-alt = "#2b1b3d";
+    foreground = "#d0b6fd";
+    primary = "#cfb5fd";
+    secondary = "#8a78b0";
+    alert = "#7b91fc";
+    disabled = "#707880";
+    };
+      in 
+''
       ;==========================================================
 ;
 ;
@@ -489,14 +500,14 @@ hide_edge_borders smart
 ;
 ;==========================================================
 
-[colors]
-background = #1c182d
-background-alt = #2b1b3d
-foreground = #d0b6fd
-primary = #cfb5fd
-secondary = #8a78b0
-alert = #7b91fc
-disabled = #707880
+;[colors]
+;background = #1c182d
+;background-alt = #2b1b3d
+;foreground = #d0b6fd
+;primary = #cfb5fd
+;secondary = #8a78b0
+;alert = #7b91fc
+;disabled = #707880
 
 [bar/example]
 width = 100%
@@ -505,8 +516,8 @@ radius = 15
 
 ; dpi = 96
 
-background = $${colors.background}
-foreground = $${colors.foreground}
+background = ${colors.background}
+foreground = ${colors.foreground}
 
 line-size = 4pt
 
@@ -519,7 +530,7 @@ padding-right = 1
 module-margin = 1
 
 separator = |
-separator-foreground = $${colors.disabled}
+separator-foreground = ${colors.disabled}
 
 font-0 = monospace;2
 
@@ -555,19 +566,19 @@ tray-spacing = 16pt
 type = internal/xworkspaces
 
 label-active = %name%
-label-active-background = $${colors.background-alt}
-label-active-underline= $${colors.primary}
+label-active-background = ${colors.background-alt}
+label-active-underline= ${colors.primary}
 label-active-padding = 1
 
 label-occupied = %name%
 label-occupied-padding = 1
 
 label-urgent = %name%
-label-urgent-background = $${colors.alert}
+label-urgent-background = ${colors.alert}
 label-urgent-padding = 1
 
 label-empty = %name%
-label-empty-foreground = $${colors.disabled}
+label-empty-foreground = ${colors.disabled}
 label-empty-padding = 1
 
 [module/xwindow]
@@ -583,44 +594,44 @@ mount-0 = /
 label-mounted = %{F#F0C674}%mountpoint%%{F-} %percentage_used%%
 
 label-unmounted = %mountpoint% not mounted
-label-unmounted-foreground = $${colors.disabled}
+label-unmounted-foreground = ${colors.disabled}
 
 [module/pulseaudio]
 type = internal/pulseaudio
 
 format-volume-prefix = "VOL "
-format-volume-prefix-foreground = $${colors.primary}
+format-volume-prefix-foreground = ${colors.primary}
 format-volume = <label-volume>
 
 label-volume = %percentage%%
 
 label-muted = muted
-label-muted-foreground = $${colors.disabled}
+label-muted-foreground = ${colors.disabled}
 
 [module/xkeyboard]
 type = internal/xkeyboard
 blacklist-0 = num lock
 
 label-layout = %layout%
-label-layout-foreground = $${colors.primary}
+label-layout-foreground = ${colors.primary}
 
 label-indicator-padding = 2
 label-indicator-margin = 1
-label-indicator-foreground = $${colors.background}
-label-indicator-background = $${colors.secondary}
+label-indicator-foreground = ${colors.background}
+label-indicator-background = ${colors.secondary}
 
 [module/memory]
 type = internal/memory
 interval = 2
 format-prefix = "RAM "
-format-prefix-foreground = $${colors.primary}
+format-prefix-foreground = ${colors.primary}
 label = %percentage_used:2%%
 
 [module/cpu]
 type = internal/cpu
 interval = 2
 format-prefix = "CPU "
-format-prefix-foreground = $${colors.primary}
+format-prefix-foreground = ${colors.primary}
 label = %percentage:2%%
 
 [network-base]
@@ -648,7 +659,7 @@ date = %H:%M
 date-alt = %Y-%m-%d %H:%M:%S
 
 label = %date%
-label-foreground = $${colors.primary}
+label-foreground = ${colors.primary}
 
 [settings]
 screenchange-reload = true
@@ -682,8 +693,8 @@ adapter = ADP1
 ; Default: 5
 poll-interval = 5
 ; vim:ft=dosini      
-      '';
-    script = "polybar example & --config=~/.config/polybar/config.ini";
+'';
+    script = "polybar example --config~/.config/polybar/config.ini &";
     };
 
     picom = {
@@ -706,3 +717,5 @@ poll-interval = 5
   system.copySystemConfiguration = true;
   system.stateVersion = "25.05";
 }
+
+
