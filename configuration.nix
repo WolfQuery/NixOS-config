@@ -4,7 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     <home-manager/nixos>
-    ];
+  ];
 
   # === System Settings ===
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -54,15 +54,15 @@
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    neovim wget gcc clang stdenv tree-sitter discord kitty xfce.thunar thunderbird
+    neovim wget stdenv tree-sitter discord kitty xfce.thunar thunderbird
     flameshot libreoffice spotify tor-browser alsa-utils helvum
     blueman bluez cava i3status i3lock-fancy-rapid xss-lock polybar
     picom rofi feh clipman tree git lazygit killall acpi wirelesstools
     brightnessctl fastfetch auto-cpufreq btop virtualbox cargo rustc
     clippy xclip texstudio texlive.combined.scheme-full godotPackages_4_5.godot 
-    gcc clang tree-sitter ripgrep fd unzip zathura lua-language-server stylua
+     clang tree-sitter ripgrep fd unzip zathura lua-language-server stylua
     rust-analyzer rustfmt cargo rustc texlive.combined.scheme-full zathura
-    ruff vtsls pyright
+    ruff vtsls pyright mermaid-cli imagemagick ghostscript ruff
   ];
 
   fonts = {
@@ -78,7 +78,7 @@
         thefuck zathura ripgrep fd git lazygit tree-sitter
       ];
     };
-   
+
     programs = {
       # --- ZSH ---
       zsh = {
@@ -105,144 +105,92 @@
         defaultEditor = true;
         viAlias = true;
         vimAlias = true;
-      
-      extraPackages = with pkgs; [
-        # lazyVim
-        lua-language-server
-        stylua
-        # Telescope
-        ripgrep
-      ];
-      plugins = with pkgs.vimPlugins; [
-        lazy-nvim
-      ];
+	
+	withNodeJs = true;
 
-      extraLuaConfig = 
-        let
-          plugins = with pkgs.vimPlugins; [
-            # LazyVim
-            LazyVim
-            bufferline-nvim
-            cmp-buffer
-            cmp-nvim-lsp
-            cmp-path
-            cmp_luasnip
-            conform-nvim
-            dashboard-nvim
-            dressing-nvim
-            flash-nvim
-            friendly-snippets
-            gitsigns-nvim
-            indent-blankline-nvim
-            lualine-nvim
-            neo-tree-nvim
-            neoconf-nvim
-            neodev-nvim
-            noice-nvim
-            nui-nvim
-            nvim-cmp
-            nvim-lint
-            nvim-lspconfig
-            nvim-notify
-            nvim-spectre
-            nvim-treesitter
-            nvim-treesitter-context
-            nvim-treesitter-textobjects
-            nvim-ts-autotag
-            nvim-ts-context-commentstring
-            nvim-web-devicons
-            persistence-nvim
-            plenary-nvim
-            telescope-fzf-native-nvim
-            telescope-nvim
-            todo-comments-nvim
-            tokyonight-nvim
-            trouble-nvim
-            vim-illuminate
-            vim-startuptime
-            which-key-nvim
-            { name = "LuaSnip"; path = luasnip; }
-            { name = "catppuccin"; path = catppuccin-nvim; lazy = false;}
-            { name = "mini.ai"; path = mini-nvim; }
-            { name = "mini.bufremove"; path = mini-nvim; }
-            { name = "mini.comment"; path = mini-nvim; }
-            { name = "mini.indentscope"; path = mini-nvim; }
-            { name = "mini.pairs"; path = mini-nvim; }
-            { name = "mini.surround"; path = mini-nvim; }
-          ];
-          mkEntryFromDrv = drv:
-            if lib.isDerivation drv then
-              { name = "${lib.getName drv}"; path = drv; }
-            else
-              drv;
-          lazyPath = pkgs.linkFarm "lazy-plugins" (builtins.map mkEntryFromDrv plugins);
-         in
-         ''
+        extraLuaConfig = ''
+          -- Bootstrap LazyVim
+          local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+          if not vim.loop.fs_stat(lazypath) then
+            vim.fn.system({
+              "git",
+              "clone",
+              "--filter=blob:none",
+              "https://github.com/folke/lazy.nvim.git",
+              "--branch=stable",
+              lazypath,
+            })
+          end
+          vim.opt.rtp:prepend(lazypath)
+
+          -- Install LazyVim and setup
           require("lazy").setup({
-            defaults = {
-              lazy = true,
-            },
-            dev = {
-              -- reuse files from pkgs.vimPlugins.*
-              path = "${lazyPath}",
-              patterns = { "" },
-              -- fallback to download
-              fallback = true,
-            },
             spec = {
               { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-              -- The following configs are needed for fixing lazyvim on nix
-              -- force enable telescope-fzf-native.nvim
-              { "nvim-telescope/telescope-fzf-native.nvim", enabled = true },
-              -- disable mason.nvim, use programs.neovim.extraPackages
-              { "williamboman/mason-lspconfig.nvim", enabled = false },
-              { "williamboman/mason.nvim", enabled = false },
-              -- import/override with your plugins
-              { import = "plugins" },
-              -- treesitter handled by xdg.configFile."nvim/parser", put this line at the end of spec to clear ensure_installed
-              { "nvim-treesitter/nvim-treesitter", opts = { ensure_installed = {} } },
+              { import = "lazyvim.plugins.extras.lang.tex" },
+              { import = "lazyvim.plugins.extras.lang.markdown" },
+              { import = "lazyvim.plugins.extras.ui.mini-animate" },
+              { import = "lazyvim.plugins.extras.lang.typescript" },
+              { import = "lazyvim.plugins.extras.lang.python" },
+              { import = "lazyvim.plugins.extras.lang.rust" },
+              { "lervag/vimtex",
+                lazy = false,
+                init = function()
+                  vim.g.vimtex_view_method = "zathura"
+                end
+              },
+	      { "MeanderingProgrammer/render-markdown.nvim",
+		  opts = {
+		    -- optional settings:
+		    enabled = true,
+		    file_types = { "markdown", "rmd" },
+		  },
+		  dependencies = {
+		    "nvim-treesitter/nvim-treesitter",
+		    "nvim-tree/nvim-web-devicons", -- optional but recommended
+		  },
+		},
+            },
+            
+	    defaults = { lazy = false, version = false },
+            install = { colorscheme = { "tokyonight", "habamax" } },
+            checker = { enabled = true },
+            performance = {
+              rtp = {
+                disabled_plugins = {
+                  "gzip",
+                  "tarPlugin",
+                  "tohtml",
+                  "tutor",
+                  "zipPlugin",
+                },
+              },
             },
           })
-        '';
+           -- LaTeX-specific soft wrapping
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "tex",
+      callback = function()
+        vim.opt_local.wrap = true           -- enable soft wrap
+        vim.opt_local.linebreak = true      -- wrap at word boundaries
+        vim.opt_local.breakindent = true    -- indent wrapped lines
+        vim.opt_local.breakindentopt = "shift:2"
+        vim.opt_local.textwidth = 0         -- don't hard wrap automatically
+      end,
+    })
+
+    vim.api.nvim_create_autocmd("FileType", {
+	  pattern = "markdown",
+	  callback = function()
+	    vim.diagnostic.disable(0)
+	  end,
+	})
+
+	'';
       };
-    };
-     # https://github.com/nvim-treesitter/nvim-treesitter#i-get-query-error-invalid-node-type-at-position
-
-      xdg.configFile."nvim/parser".source =
-        let
-          parsers = pkgs.symlinkJoin {
-            name = "treesitter-parsers";
-            paths = (pkgs.vimPlugins.nvim-treesitter.withPlugins (plugins: with plugins; [
-              c
-              lua
-            ])).dependencies;
-          };
-        in
-        "${parsers}/parser";
-
-      # Normal LazyVim config here, see https://github.com/LazyVim/starter/tree/main/lua
-      xdg.configFile."nvim/lua/config/options.lua".text = ''
-        vim.opt.number = true
-        vim.opt.relativenumber = true
-        vim.opt.termguicolors = true
-        vim.opt.expandtab = true
-        vim.opt.shiftwidth = 2
-        vim.opt.tabstop = 2
-        vim.opt.smartindent = true
-        vim.opt.cursorline = true
-        vim.opt.scrolloff = 8
-        vim.opt.ignorecase = true
-        vim.opt.smartcase = true
-
-        -- set Catppuccin theme
-        vim.cmd([[colorscheme catppuccin]])
-        vim.g.catppuccin_flavour = "macchiato"
-      '';
-
-
 
       # --- Kitty Terminal ---
-      programs.kitty = {
+      kitty = {
         enable = true;
         extraConfig = ''
           font_family Fira Code
@@ -280,6 +228,7 @@
           color15              #d8cab8
         '';
       };
+    };
 
     xsession = {
       windowManager = {
@@ -287,7 +236,7 @@
           enable = true;
           config = {
             bars = [];
-            };
+          };
           extraConfig = ''
           # This file has been auto-generated by i3-config-wizard(1).
 # It will not be overwritten, so edit it as you like.
@@ -496,16 +445,16 @@ mode "resize" {
         # Pressing right will grow the window’s width.
         # Pressing up will shrink the window’s height.
         # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize shrink height 10 px or 10 ppt
-        bindsym uring resize grow width 10 px or 10 ppt
+        bindsym j resize shrink width 5 px or 5 ppt
+        bindsym k resize grow height 5 px or 5 ppt
+        bindsym l resize shrink height 5 px or 5 ppt
+        bindsym uring resize grow width 5 px or 5 ppt
 
         # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Down resize grow height 10 px or 10 ppt
-        bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
+        bindsym Left resize shrink width 5 px or 5 ppt
+        bindsym Down resize grow height 5 px or 5 ppt
+        bindsym Up resize shrink height 5 px or 5 ppt
+        bindsym Right resize grow width 5 px or 5 ppt
 
         # back to normal: Enter or Escape or $mod+r
         bindsym Return mode "default"
