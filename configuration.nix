@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }:
 
+let
+  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -33,7 +36,9 @@
   };
 
   services.displayManager.defaultSession = "none+i3";
-  services.displayManager.ly.enable = true;
+  services.displayManager.ly = {
+	enable = true;
+  };
 
   services.xserver.xkb.layout = "cz";
   services.xserver.xkb.options = "eurosign:e,caps:escape";
@@ -62,7 +67,7 @@
     clippy xclip texstudio texlive.combined.scheme-full godotPackages_4_5.godot 
      clang tree-sitter ripgrep fd unzip zathura lua-language-server stylua
     rust-analyzer rustfmt cargo rustc texlive.combined.scheme-full zathura
-    ruff vtsls pyright mermaid-cli imagemagick ghostscript ruff
+    ruff vtsls pyright mermaid-cli imagemagick ghostscript ruff python314 ly
   ];
 
   fonts = {
@@ -87,6 +92,7 @@
         shellAliases = {
           ll = "ls -l";
           rebuild = "sudo nixos-rebuild switch";
+	  fk = "fuck";
         };
         history.size = 10000;
 
