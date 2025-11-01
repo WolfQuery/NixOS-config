@@ -2,7 +2,25 @@
 
 let
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
-in
+
+  hidePolybarInFullscreen = pkgs.writeShellScript "hidePolybarInFullscreen,sh" ''
+    #!/usr/bin/env bash
+
+    # Wait a bit to ensure i3 and polybar are ready
+    sleep 1
+
+    # Subscribe to i3 window events
+    i3-msg -t subscribe -m '[ "window" ]' | while read -r event; do
+    # Hide Polybar when a window enters fullscreen
+    if echo "$event" | grep -q '"fullscreen_mode":[[:space:]]*1'; then
+        polybar-msg cmd hide
+    # Show Polybar when fullscreen exits
+    elif echo "$event" | grep -q '"fullscreen_mode":[[:space:]]*0'; then
+        polybar-msg cmd show
+    fi
+    done
+  '';
+  in
 {
   imports = [
     ./hardware-configuration.nix
@@ -20,10 +38,20 @@ in
     enable = true;
     powerOnBoot = true;
     settings = {
-      General.Experimental = true;
+      General = {
+        Experimental = true;
+	Enable = "Source,Sink,Media,Socket";
+	AutoConnect = true;
+	FastConnectabke = true;
+      };
       Policy.AutoEnable = true;
     };
   };
+
+# In your configuration.nix
+environment.variables = {
+  JAVA_HOME = "${pkgs.jdk17}/lib/openjdk";  # adjust path based on version
+};
 
   time.timeZone = "Europe/Prague";
 
@@ -33,7 +61,11 @@ in
       enable = true;
       extraPackages = with pkgs; [ polybar picom rofi i3lock-fancy-rapid ];
     };
+    desktopManager.xfce = {
+      enable = true;
+    };
   };
+
 
   services.displayManager.defaultSession = "none+i3";
   services.displayManager.ly = {
@@ -47,13 +79,20 @@ in
   services.pipewire = { enable = true; pulse.enable = true; };
   services.libinput.enable = true;
 
-  users.users.mun = {
+  users.users = {
+  liv = {
+    isNormalUser = true;
+    extraGroups = [ "bluetooth" "networkmanager" ];
+    shell = pkgs.bash;
+  };
+
+  mun = {
     isNormalUser = true;
     extraGroups = [ "wheel" "bluetooth" "networkmanager" ];
     packages = with pkgs; [ tree ];
     shell = pkgs.zsh;
   };
-
+  };
   programs.firefox.enable = true;
   programs.zsh.enable = true;
   nixpkgs.config.allowUnfree = true;
@@ -68,6 +107,20 @@ in
      clang tree-sitter ripgrep fd unzip zathura lua-language-server stylua
     rust-analyzer rustfmt cargo rustc texlive.combined.scheme-full zathura
     ruff vtsls pyright mermaid-cli imagemagick ghostscript ruff python314 ly
+    prismlauncher vlc lua53Packages.luarocks
+
+    (retroarch.withCores (cores: with cores; [
+    # --- NES --- #
+    fceumm
+
+    # --- GBA --- #
+    mgba
+
+    # --- GB / GBC --- #
+    gambatte
+    sameboy
+  ])) 
+    
   ];
 
   fonts = {
@@ -75,12 +128,47 @@ in
     packages = with pkgs; [ fira-code noto-fonts noto-fonts-emoji ];
   };
 
+  programs.steam = {
+  enable = true;
+  remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+  dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+  localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+  };
+
+   # enable Java support
+  programs.java = {
+    enable = true;
+    package = pkgs.jdk17;  # or pkgs.jdk11, pkgs.jdk8, whatever you need
+  };
+
+  services.xserver.videoDrivers = [ "intel" ];
+
+  hardware.graphics = {
+  enable = true;
+  extraPackages = with pkgs; [
+    vaapiIntel          # for video acceleration on Intel
+    # or vpl-gpu-rt depending on your NixOS version
+    ];
+  };
+
+
+
   # === Home Manager User Config ===
+  home-manager.users.liv = {pkgs, ... }: {
+    home = {
+      stateVersion = "25.05";
+      packages = with pkgs; [
+
+      ];
+    };
+
+  };
+
   home-manager.users.mun = { pkgs, ... }: {
     home = {
       stateVersion = "25.05";
       packages = with pkgs; [
-        thefuck zathura ripgrep fd git lazygit tree-sitter
+        thefuck zathura ripgrep fd git lazygit tree-sitter 
       ];
     };
 
@@ -139,6 +227,7 @@ in
               { import = "lazyvim.plugins.extras.lang.typescript" },
               { import = "lazyvim.plugins.extras.lang.python" },
               { import = "lazyvim.plugins.extras.lang.rust" },
+	      { import = "lazyvim.plugins.extras.lang.nix" },
               { "lervag/vimtex",
                 lazy = false,
                 init = function()
@@ -290,13 +379,21 @@ exec_always --no-startup-id sh -c "sleep 1 && picom --config ~/.config/picom/pic
 exec --no-startup-id -merge ~/.Xresources
 
 # automatically call feh to set the background wallpaper
-exec_always --no-startup-id feh --bg-scale ~/Pictures/wallpapers/may2025/2CB.png
+exec_always --no-startup-id feh --bg-scale ~/Pictures/wallpapers/xenia.jpg
 
 # automatically start xautolock to lock the screen after 3 minutes of inactivity
 #exec --no-startup-id xautolock -time 3 -locker "i3lock-fancy"
 
 # start polybar
 exec_always --no-startup-id sh -c "killall -q polybar; sleep 1; polybar example --config=~/.config/polybar/config.ini &"
+
+# Add a gap on the top via i3-gaps to accomodate for the bar
+gaps top 60
+
+# Make fullscreen windows render over everything including docks like polybar
+exec_always --no-startup-id ${hidePolybarInFullscreen} 
+
+
 
 # automatically start flameshot
 exec --no-startup-id flameshot
@@ -552,9 +649,16 @@ hide_edge_borders smart
 ;disabled = #707880
 
 [bar/example]
-width = 100%
+width = 98%
 height = 30pt
 radius = 15
+offset-x = 1% 
+offset-y = 1%
+
+override-redirect = true 
+fixed-center = true
+
+enable-ipc = true
 
 ; dpi = 96
 
@@ -566,7 +670,7 @@ line-size = 4pt
 border-size = Opt
 border-color = #00000000
 
-padding-left = 0
+padding-left = 1 
 padding-right = 1
 
 module-margin = 1
@@ -574,15 +678,13 @@ module-margin = 1
 separator = |
 separator-foreground = ${colors.disabled}
 
-font-0 = monospace;2
+font-0 = fira code;2
 
 modules-left = xworkspaces xwindow
-modules-right = filesystem memory cpu wlan xkeyboard battery date
+modules-right = filesystem memory cpu pulseaudio-devices wlan xkeyboard battery date
 
 cursor-click = pointer
 cursor-scroll = ns-resize
-
-enable-ipc = true
 
 ; wm-restack = generic
 ; wm-restack = bspwm
@@ -751,9 +853,15 @@ poll-interval = 5
       shadow = true;
       shadowOffsets = [ 12 12 ];
       shadowOpacity = 0.5;
+      shadowExclude = [
+        "class_g = 'Polybar'"
+        "name = 'Polybar'"
+      ];
     };
   };
 };
+
+
   services.openssh.enable = true;
 
   system.copySystemConfiguration = true;
