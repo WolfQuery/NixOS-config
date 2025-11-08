@@ -107,7 +107,7 @@ environment.variables = {
      clang tree-sitter ripgrep fd unzip zathura lua-language-server stylua
     rust-analyzer rustfmt cargo rustc texlive.combined.scheme-full zathura
     ruff vtsls pyright mermaid-cli imagemagick ghostscript ruff python314 ly
-    prismlauncher vlc lua53Packages.luarocks
+    prismlauncher vlc lua53Packages.luarocks mermaid-cli lua nil obsidian
 
     (retroarch.withCores (cores: with cores; [
     # --- NES --- #
@@ -245,6 +245,8 @@ environment.variables = {
 		    "nvim-tree/nvim-web-devicons", -- optional but recommended
 		  },
 		},
+		-- Mermaid file syntax highlighting
+	        { "mracos/mermaid.vim", ft = { "mermaid" } },
             },
             
 	    defaults = { lazy = false, version = false },
@@ -281,6 +283,14 @@ environment.variables = {
 	  end,
 	})
 
+    -- Configure Nix LSP (nil_ls) to use system binary
+    local lspconfig = require("lspconfig")
+    lspconfig.nil_ls.setup({
+      cmd = { "nil" },  -- points to nix language server installed by Nix
+    })
+
+    -- Set system clipboard
+    vim.opt.clipboard = "unnamedplus"
 	'';
       };
 
@@ -680,8 +690,9 @@ separator-foreground = ${colors.disabled}
 
 font-0 = fira code;2
 
-modules-left = xworkspaces xwindow
-modules-right = filesystem memory cpu pulseaudio-devices wlan xkeyboard battery date
+modules-left = xworkspaces
+modules-center = date
+modules-right = filesystem memory cpu pulseaudio-devices wlan xkeyboard battery 
 
 cursor-click = pointer
 cursor-scroll = ns-resize
@@ -857,6 +868,9 @@ poll-interval = 5
         "class_g = 'Polybar'"
         "name = 'Polybar'"
       ];
+      settings = {
+        corner-radius = 15;
+      };
     };
   };
 };
